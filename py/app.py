@@ -72,7 +72,7 @@ class TeamSummary:
 
 def scrape_data():
     #r = requests.get(url).text
-    soup = Soup(open('C:\Users\Ben\Downloads\espn.html'))
+    soup = Soup(open('C:\Users\ASUS\Downloads\espn.html'))
 
     src = soup.find("script",text=re.compile("window.espn.scoreboardData")).split("=",1)[1].rstrip(";")
     game_data = []
@@ -134,8 +134,8 @@ def get_team_id(name):
 def main():
     gd = scrape_data()
     summaries = get_game_summaries(gd)
-    print summaries[0].away.color1
-    print_data(gd)
+    print summaries[0].home.color1
+    #print_data(gd)
 
 main()
 
