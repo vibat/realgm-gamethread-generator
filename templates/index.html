@@ -10,11 +10,13 @@
 
     <title>NBA Game Thread Generator</title>
 
+    <script src="static/js/jquery.min.js"></script>
+
     <!-- Bootstrap core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="css/shop-item.css" rel="stylesheet">
+    <link href="static/css/shop-item.css" rel="stylesheet">
 
     <!-- Temporary navbar container fix -->
     <style>
@@ -27,6 +29,7 @@
                 width: 100%;
             }
         }
+
     </style>
 
 </head>
@@ -63,7 +66,10 @@
                     <div class="col-md-4">
                         <div class="card-block" align="center">
                             <h3 class="card-title">Select Date</h3>
-                            <input type="date" name="date" />
+                            <form action="py/app.py" method="post">
+                                <input type="date" name="date" id="datepicker" />
+                                <input type="submit" class="btn" value="Get Games">
+                            </form>
                         </div>
 
                     </div>
@@ -137,10 +143,15 @@
         <!-- /.container -->
     </footer>
 
+
+    <!--scripts loaded here-->
+    <script type="text/javascript">
+
+    </script>
+
     <!-- Bootstrap core JavaScript -->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/tether/tether.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="static/js/tether.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
 
 </body>
 

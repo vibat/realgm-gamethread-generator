@@ -1,8 +1,10 @@
+#!C:\Python27\python.exe
+
 """
 NBA Game Thread Generator
 Ben H
 batsmasher@gmail.com
-May 2017
+Created May 2017 - Updated July 2017
 """
 
 import requests
@@ -12,8 +14,13 @@ import BeautifulSoup
 import time
 import re
 import nba_py
+import cgi
 from nba_py import team, game
 from pprint import pprint as pp
+
+from flask import Flask, render_template, request
+app = Flask(__name__)
+
 Soup = BeautifulSoup.BeautifulSoup
 
 BASKETBALL_TEAMS = 2
@@ -21,10 +28,12 @@ BASE_URL = 'http://www.espn.com/nba/scoreboard/_/date/{0}'
 date = time.strftime('%Y%m%d')
 url = BASE_URL.format(date)
 
+###!/usr/bin/python
+
 teams = {
-    'Atlanta Hawks' : 1610612737,
-    'Boston Celtics' : 1610612738,
-    'Brooklyn Nets' : 1610612751,
+    'Atlanta Hawks': 1610612737,
+    'Boston Celtics': 1610612738,
+    'Brooklyn Nets': 1610612751,
     'Charlotte Hornets': 1610612766,
     'Chicago Bulls': 1610612741,
     'Cleveland Cavaliers': 1610612739,
@@ -54,14 +63,16 @@ teams = {
     'Washington Wizards': 1610612764
 }
 
+
 class GameSummary:
-    def __init__(self,id,home,away):
+    def __init__(self, id, home, away):
         self.id = id
         self.home = home
         self.away = away
 
+
 class TeamSummary:
-    def __init__(self,name,id,record,logo,color1,color2):
+    def __init__(self, name, id, record, logo, color1, color2):
         self.name = name
         self.id = id
         self.record = record
@@ -71,10 +82,10 @@ class TeamSummary:
 
 
 def scrape_data():
-    #r = requests.get(url).text
+    # r = requests.get(url).text
     soup = Soup(open('C:\Users\ASUS\Downloads\espn.html'))
 
-    src = soup.find("script",text=re.compile("window.espn.scoreboardData")).split("=",1)[1].rstrip(";")
+    src = soup.find("script", text=re.compile("window.espn.scoreboardData")).split("=", 1)[1].rstrip(";")
     game_data = []
 
     js = json.loads(src[:src.index(";")])
@@ -86,7 +97,7 @@ def scrape_data():
 
 def print_data(game_data):
     for gd in game_data:
-        pass #pp(gd)
+        pass  # pp(gd)
 
 
 def get_game_summaries(games_data):
@@ -131,18 +142,29 @@ def get_team_id(name):
     return teams[name]
 
 
+def get_games():
+    return
+
+
+@app.route("/")
 def main():
-    gd = scrape_data()
-    summaries = get_game_summaries(gd)
-    print summaries[0].home.color1
-    #print_data(gd)
+    return render_template('index.html')
+    #pp(htmlData)
+    # gd = scrape_data()
+    # summaries = get_game_summaries(gd)
+    # print summaries[0].home.color1
+    # print_data(gd)
 
-main()
 
-pd.set_option('display.max_columns', None)
+if __name__ == "__main__":
+    app.run()
 
-#test = nba_py.Scoreboard(month=5,day=12,year=2017,league_id='00',offset=0)
-#print test.available()
-#print team.TeamLastNGamesSplits(1610612756).last5()
-#print team.TeamGameLogs(1610612756).info()
-#print team.TeamSummary(1610612756).info()
+#main()
+
+# pd.set_option('display.max_columns', None)
+
+# test = nba_py.Scoreboard(month=5,day=12,year=2017,league_id='00',offset=0)
+# print test.available()
+# print team.TeamLastNGamesSplits(1610612756).last5()
+# print team.TeamGameLogs(1610612756).info()
+# print team.TeamSummary(1610612756).info()
