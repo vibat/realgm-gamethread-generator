@@ -14,19 +14,17 @@ import BeautifulSoup
 import time
 import re
 import nba_py
-import cgi
 from nba_py import team, game
 from pprint import pprint as pp
 
 from flask import Flask, render_template, request
+
 app = Flask(__name__)
 
 Soup = BeautifulSoup.BeautifulSoup
 
 BASKETBALL_TEAMS = 2
-BASE_URL = 'http://www.espn.com/nba/scoreboard/_/date/{0}'
-date = time.strftime('%Y%m%d')
-url = BASE_URL.format(date)
+BASE_URL = 'http://www.espn.com.au/nba/scoreboard/_/date/{0}'
 
 ###!/usr/bin/python
 
@@ -70,6 +68,13 @@ class GameSummary:
         self.home = home
         self.away = away
 
+    def serialize(self):
+        return {
+            'id': self.id,
+            'home': self.home.serialize(),
+            'away': self.away.serialize()
+        }
+
 
 class TeamSummary:
     def __init__(self, name, id, record, logo, color1, color2):
@@ -80,9 +85,22 @@ class TeamSummary:
         self.color1 = color1
         self.color2 = color2
 
+    def serialize(self):
+        return {
+            'name': self.name,
+            'id': self.id,
+            'record': self.record,
+            'logo': self.logo,
+            'color1': self.color1,
+            'color2': self.color2
+        }
 
-def scrape_data():
+
+def scrape_data(date):
+    url = BASE_URL.format(date)
+    print url
     # r = requests.get(url).text
+    # open('C:\Users\ASUS\Downloads\espn.html')
     soup = Soup(open('C:\Users\ASUS\Downloads\espn.html'))
 
     src = soup.find("script", text=re.compile("window.espn.scoreboardData")).split("=", 1)[1].rstrip(";")
@@ -118,10 +136,6 @@ def get_team_summaries(game_data):
     :return: A list of TeamSummarys
     """
 
-    ordered = True
-
-    if game_data['competitors'][0]['homeAway'] == 'away': ordered = False
-
     summaries = []
 
     for i in range(BASKETBALL_TEAMS):
@@ -135,7 +149,7 @@ def get_team_summaries(game_data):
         )
         summaries.append(t)
 
-    return sorted(summaries, reverse=not ordered)
+    return sorted(summaries, reverse=(game_data['competitors'][0]['homeAway'] == 'away'))
 
 
 def get_team_id(name):
@@ -146,25 +160,37 @@ def get_games():
     return
 
 
+@app.route("/get_games/")
+def get_games():
+    try:
+        selected_date = request.args['date'].replace('-', '')
+        gd = scrape_data(selected_date)
+        gs = get_game_summaries(gd)
+        return render_template('index.html', games=gs)
+    except LookupError:
+        pass
+    return render_template('index.html')
+
+
+@app.route("/summary/", methods=["POST"])
+def summary():
+    return render_template('index.html')
+
+
 @app.route("/")
 def main():
     return render_template('index.html')
-    #pp(htmlData)
-    # gd = scrape_data()
-    # summaries = get_game_summaries(gd)
-    # print summaries[0].home.color1
-    # print_data(gd)
 
 
 if __name__ == "__main__":
     app.run()
 
-#main()
+    # main()
 
-# pd.set_option('display.max_columns', None)
+    # pd.set_option('display.max_columns', None)
 
-# test = nba_py.Scoreboard(month=5,day=12,year=2017,league_id='00',offset=0)
-# print test.available()
-# print team.TeamLastNGamesSplits(1610612756).last5()
-# print team.TeamGameLogs(1610612756).info()
-# print team.TeamSummary(1610612756).info()
+    # test = nba_py.Scoreboard(month=5,day=12,year=2017,league_id='00',offset=0)
+    # print test.available()
+    # print team.TeamLastNGamesSplits(1610612756).last5()
+    # print team.TeamGameLogs(1610612756).info()
+    # print team.TeamSummary(1610612756).info()
