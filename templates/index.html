@@ -39,17 +39,17 @@
     <!-- Navigation -->
     <nav class="navbar fixed-top navbar-toggleable-md navbar-inverse bg-inverse">
         <div class="container">
-            <a class="navbar-brand" href="#">NBAGTG v0.1a</a>
+            <a class="navbar-brand" href="/">NBAGTG v0.1a</a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Source Code</a>
+                        <a class="nav-link" href="https://github.com/vibat/realgm-gamethread-generator">Source Code</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
+                        <a class="nav-link" href="https://forums.realgm.com/boards/ucp.php?i=pm&mode=compose&u=143622">Contact</a>
                     </li>
                 </ul>
             </div>
@@ -80,7 +80,7 @@
                         <div class="btn-group-justified btn-group-sm">
                             <form action="{{ url_for('summary')}}" class="gameSelector" method="post">
                                 {% for game in games %}
-                                <button class="btn btn-primary" name="{{ game.id }}">{{ game.home.name }} vs {{ game.away.name }}</button>
+                                <button class="btn btn-primary" name="gid" value="{{ game.id }}">{{ game.home.name }} vs {{ game.away.name }}</button>
                                 {% endfor %}
                             </form>
 
@@ -105,7 +105,8 @@
                     <div class="card-header">
                         phpBB markup source
                     </div>
-                    <div class="card-block">
+                    <p class="card-block">
+                        <code style="white-space: pre-wrap;">{{ game }}</code>
                     </div>
                 </div>
                 <!-- /.card -->

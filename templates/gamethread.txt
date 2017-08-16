@@ -1,0 +1,68 @@
+[size=200]{{ game.home.name }}[/size] vs [size=200]{{ game.away.name }}[/size]
+
+{{ game.home.name }}
+------------
+
+[img]{{ game.home.logo }}[/img]
+
+Record: {{ game.home.record }}
+
+Roster:
+[size=85]
+        TeamID SEASON LeagueID             PLAYER NUM POSITION HEIGHT WEIGHT  
+0   1610612756   2016       00    Marquese Chriss   0        F   6-10    233   
+1   1610612756   2016       00       Devin Booker   1        G    6-6    206   
+2   1610612756   2016       00       Eric Bledsoe   2        G    6-1    205   
+3   1610612756   2016       00       Jared Dudley   3        F    6-7    225   
+4   1610612756   2016       00     Tyson Chandler   4        C    7-1    240   
+5   1610612756   2016       00         Tyler Ulis   8        G   5-10    150   
+6   1610612756   2016       00  Derrick Jones Jr.  10        F    6-7    190   
+7   1610612756   2016       00     Brandon Knight  11        G    6-3    195   
+8   1610612756   2016       00          TJ Warren  12        F    6-8    225   
+9   1610612756   2016       00       Ronnie Price  14        G    6-2    190   
+10  1610612756   2016       00      Alan Williams  15      F-C    6-8    260   
+11  1610612756   2016       00    Leandro Barbosa  19        G    6-3    194   
+12  1610612756   2016       00           Alex Len  21        C    7-1    260   
+13  1610612756   2016       00     Elijah Millsap  22      G-F    6-7    215   
+14  1610612756   2016       00      Dragan Bender  35        F    7-1    225  
+
+      TEAM_ID SEASON   COACH_ID FIRST_NAME  LAST_NAME      COACH_NAME  
+0  1610612756   2016  WAT000001       Earl     Watson     Earl Watson   
+1  1610612756   2016  COR165741     Tyrone     Corbin   Tyrone Corbin   
+2  1610612756   2016  BJO563610       Nate  Bjorkgren  Nate Bjorkgren   
+3  1610612756   2016  NEL196395      Aaron     Nelson    Aaron Nelson   
+4  1610612756   2016  SAW437791    Quinton     Sawyer  Quinton Sawyer   
+5  1610612756   2016  TRI032571        Jay     Triano      Jay Triano   
+6  1610612756   2016  GAR409601     Marlon    Garnett  Marlon Garnett   
+7  1610612756   2016  DUN192255      Scott     Duncan    Scott Duncan   
+8  1610612756   2016  FRA410011      Jason     Fraser    Jason Fraser [/size]  
+
+          FG%     FT%   3PT%   PTS    REB   AST   STL   BLK
+         48.2%    81%    34%  101.2   50.8  21.7  7.4    61
+Rank   11th     2nd    21st  18th    1st   24th  12th  2nd
+
+Projected Starters:
+PG: George Hill
+SG: Gordon Hayward
+SF: Joe Johnson
+PF: Boris Diaw
+C: Rudy Gobert
+
+Injury report:
+George hill (hip) - questionable
+
+Form (last 5 games):
+
+PHX @ SAC  L  
+PHX vs. DAL  W     
+PHX vs. OKC  W  
+PHX vs. GSW  L    
+PHX vs. HOU  L
+
+Record : 3-2
+
+          FG%     FT%   3PT%   PTS    REB   AST   STL   BLK
+         48.2%    81%    34%  101.2   50.8  21.7  7.4    61
+Rank   11th     2nd    21st  18th    1st   24th  12th  2nd
+
+Last time they met:

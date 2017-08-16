@@ -1,4 +1,4 @@
-#!C:\Python27\python.exe
+#!/usr/bin/python
 
 """
 NBA Game Thread Generator
@@ -10,7 +10,8 @@ Created May 2017 - Updated July 2017
 import requests
 import pandas as pd
 import json
-import BeautifulSoup
+import bs4
+from HTMLParser import HTMLParser
 import time
 import re
 import nba_py
@@ -21,12 +22,12 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-Soup = BeautifulSoup.BeautifulSoup
+Soup = bs4.BeautifulSoup
+h = HTMLParser()
+game_summaries = []
 
 BASKETBALL_TEAMS = 2
 BASE_URL = 'http://www.espn.com.au/nba/scoreboard/_/date/{0}'
-
-###!/usr/bin/python
 
 teams = {
     'Atlanta Hawks': 1610612737,
@@ -41,8 +42,8 @@ teams = {
     'Golden State Warriors': 1610612744,
     'Houston Rockets': 1610612745,
     'Indiana Pacers': 1610612754,
-    'Los Angeles Clippers': 1610612746,
-    'Los Angeles Lakers': 1610612747,
+    'LA Clippers': 1610612746,
+    'LA Lakers': 1610612747,
     'Memphis Grizzlies': 1610612763,
     'Miami Heat': 1610612748,
     'Milwaukee Bucks': 1610612749,
@@ -68,13 +69,6 @@ class GameSummary:
         self.home = home
         self.away = away
 
-    def serialize(self):
-        return {
-            'id': self.id,
-            'home': self.home.serialize(),
-            'away': self.away.serialize()
-        }
-
 
 class TeamSummary:
     def __init__(self, name, id, record, logo, color1, color2):
@@ -85,25 +79,16 @@ class TeamSummary:
         self.color1 = color1
         self.color2 = color2
 
-    def serialize(self):
-        return {
-            'name': self.name,
-            'id': self.id,
-            'record': self.record,
-            'logo': self.logo,
-            'color1': self.color1,
-            'color2': self.color2
-        }
-
 
 def scrape_data(date):
     url = BASE_URL.format(date)
     print url
     # r = requests.get(url).text
     # open('C:\Users\ASUS\Downloads\espn.html')
-    soup = Soup(open('C:\Users\ASUS\Downloads\espn.html'))
+    soup = Soup(open('C:\Users\ASUS\Downloads\espn4.html').read(), "html.parser")
 
-    src = soup.find("script", text=re.compile("window.espn.scoreboardData")).split("=", 1)[1].rstrip(";")
+    src = h.unescape(
+        soup.find("script", text=re.compile("window.espn.scoreboardData")).text.split("=", 1)[1].rstrip(";"))
     game_data = []
 
     js = json.loads(src[:src.index(";")])
@@ -116,6 +101,13 @@ def scrape_data(date):
 def print_data(game_data):
     for gd in game_data:
         pass  # pp(gd)
+
+
+def get_game_summary(gid):
+    for game_summary in game_summaries:
+        if game_summary.id == gid:
+            return game_summary
+    return "Can\'t find the game"
 
 
 def get_game_summaries(games_data):
@@ -153,28 +145,40 @@ def get_team_summaries(game_data):
 
 
 def get_team_id(name):
-    return teams[name]
-
-
-def get_games():
-    return
+    try:
+        return teams[name]
+    except LookupError:
+        print "Team name not found"
 
 
 @app.route("/get_games/")
 def get_games():
     try:
         selected_date = request.args['date'].replace('-', '')
+
         gd = scrape_data(selected_date)
-        gs = get_game_summaries(gd)
-        return render_template('index.html', games=gs)
+        games = get_game_summaries(gd)
+
+        global game_summaries
+        game_summaries = games
+
+        return render_template('index.html', games=games)
     except LookupError:
-        pass
-    return render_template('index.html')
+        return render_template('index.html')
 
 
 @app.route("/summary/", methods=["POST"])
 def summary():
-    return render_template('index.html')
+    try:
+        gid = request.form['gid']
+        gs = get_game_summary(gid)
+
+        global game_summaries
+        return render_template('index.html',
+                               game=render_template('gamethread.txt', game=gs),
+                               games=game_summaries)
+    except LookupError:
+        return render_template('index.html')
 
 
 @app.route("/")
