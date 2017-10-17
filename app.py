@@ -8,7 +8,6 @@ Created May 2017 - Updated July 2017
 """
 
 import requests
-import pandas as pd
 import json
 import bs4
 from HTMLParser import HTMLParser
@@ -64,20 +63,67 @@ teams = {
 
 
 class GameSummary:
-    def __init__(self, id, home, away):
+    def __init__(self, id, home, away, venue):
         self.id = id
         self.home = home
         self.away = away
+        self.venue = venue
 
 
 class TeamSummary:
-    def __init__(self, name, id, record, logo, color1, color2):
+    def __init__(self, name, id, record, logo, color1, color2, players, coaches, stats, last5):
         self.name = name
         self.id = id
         self.record = record
         self.logo = logo
         self.color1 = color1
         self.color2 = color2
+        self.players = players
+        self.coaches = coaches
+        self.stats = stats
+        self.last5 = last5
+
+
+class Player:
+    def __init__(self, name, age, height, weight, position, number):
+        self.name = name
+        self.age = age
+        self.height = height
+        self.weight = weight
+        self.position = position
+        self.number = number
+
+
+class Coach:
+    def __init__(self, name, coach_type):
+        self.name = name
+        self.coach_type = coach_type
+
+
+class TeamStats:
+    def __init__(self, fg, fgr, ft, ftr, tpp, tppr, pts, ptsr, reb, rebr, ast, astr, stl, stlr, blk, blkr):
+        self.fg = fg
+        self.fgr = fgr
+        self.ft = ft
+        self.ftr = ftr
+        self.tpp = tpp
+        self.tppr = tppr
+        self.pts = pts
+        self.ptsr = ptsr
+        self.reb = reb
+        self.rebr = rebr
+        self.ast = ast
+        self.astr = astr
+        self.stl = stl
+        self.stlr = stlr
+        self.blk = blk
+        self.blkr = blkr
+
+
+class Last5:
+    def __init__(self, record, stats):
+        self.record = record
+        self.stats = stats
 
 
 def scrape_data(date):
@@ -116,7 +162,8 @@ def get_game_summaries(games_data):
         team_summaries = get_team_summaries(gd)
         gs = GameSummary(gd['id'],
                          team_summaries[0],
-                         team_summaries[1])
+                         team_summaries[1],
+                         gd['venue']['fullName'])
         summaries.append(gs)
     return summaries
 
@@ -137,7 +184,11 @@ def get_team_summaries(game_data):
             game_data['competitors'][i]['records'][0]['summary'],
             game_data['competitors'][i]['team']['logo'],
             game_data['competitors'][i]['team']['color'],
-            game_data['competitors'][i]['team']['alternateColor']
+            game_data['competitors'][i]['team']['alternateColor'],
+            None,
+            None,
+            None,
+            None
         )
         summaries.append(t)
 
@@ -145,10 +196,68 @@ def get_team_summaries(game_data):
 
 
 def get_team_id(name):
+    """
+    Finds the NBA team ID associated with the inputted name
+    :param name: The string name of an NBA team
+    :return: The NBA team ID
+    """
     try:
         return teams[name]
     except LookupError:
         print "Team name not found"
+
+
+def get_detailed_summary(game_summary):
+    """
+    Updates the basic GameSummary and returns a more detailed version
+    :rtype: GameSummary
+    :param game_summary:
+    :return: An updated GameSummary with stats, players and coaches
+    """
+
+
+    game_summary.id
+    return
+
+
+def get_team_details(team_summary):
+    # type: (TeamSummary) -> TeamSummary
+
+    coaches = []
+    players = []
+
+    for coach in nba_py.team.TeamCommonRoster(team_summary.id).coaches():
+        coaches.append(Coach(coach["COACH_NAME"],
+                             coach["COACH_TYPE"]))
+
+    for player in nba_py.team.TeamCommonRoster(team_summary.id).roster():
+        players.append(Player(player["PLAYER"],
+                              player["AGE"],
+                              player["HEIGHT"],
+                              player["WEIGHT"],
+                              player["POSITION"],
+                              player["NUM"]))
+
+    team_summary.coaches = coaches
+    team_summary.players = players
+
+    last5record = ""
+
+    for row in nba_py.team.TeamGameLogs(team_summary.id,season='2016-17', season_type='Regular Season').info()[:5].iterrows():
+        last5record += row[1]['MATCHUP'] + " - " + row[1]['WL'] + "\n"
+
+    team_summary.last5 = Last5(last5record,None)
+
+    return team_summary
+
+
+def get_game_stats(team_id, ngames=None):
+    # type: (str, str) -> TeamStats
+
+    if (ngames is not None) and ngames <82:
+        pass
+
+    return
 
 
 @app.route("/get_games/")
@@ -157,6 +266,7 @@ def get_games():
         selected_date = request.args['date'].replace('-', '')
 
         gd = scrape_data(selected_date)
+        pp(gd)
         games = get_game_summaries(gd)
 
         global game_summaries
@@ -187,14 +297,6 @@ def main():
 
 
 if __name__ == "__main__":
+    #print nba_py.team.TeamGeneralSplits(get_team_id('Phoenix Suns')).overall()['FG3_PCT_RANK']
     app.run()
-
-    # main()
-
-    # pd.set_option('display.max_columns', None)
-
-    # test = nba_py.Scoreboard(month=5,day=12,year=2017,league_id='00',offset=0)
-    # print test.available()
-    # print team.TeamLastNGamesSplits(1610612756).last5()
-    # print team.TeamGameLogs(1610612756).info()
-    # print team.TeamSummary(1610612756).info()
+    #print nba_py.team.TeamCommonRoster(get_team_id('Phoenix Suns')).coaches()["COACH_NAME"]
